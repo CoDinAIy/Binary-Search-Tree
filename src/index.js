@@ -1,6 +1,6 @@
 const _ = require("lodash"); 
 
-console.log('Working')
+console.log('Wor king')
 
 
 
@@ -18,7 +18,7 @@ class Tree {
     this.root = root
   }
     
-  buildTree(array) {
+  buildTree(arr) {
     const duplicateRemovedArr = _.uniq(arr) //remove duplicates
     const sortedArr = duplicateRemovedArr.sort((a, b) => a - b) //sorts numerically
     
@@ -163,6 +163,7 @@ class Tree {
     this.preOrder(callback, currentItem.left)
     this.preOrder(callback, currentItem.right)
 
+    return
   } 
 
   postOrder(callback = data => console.log(data), currentItem = this.root) {
@@ -175,23 +176,69 @@ class Tree {
     this.postOrder(callback, currentItem.left)
   }
   
+  
+  depth(node, currentItem = this.root, depth = 0) {
+    if (currentItem === null) return -1
+    
+    if (currentItem.data === node) return depth
+    
+    const left = this.depth(node, currentItem.left, depth + 1)
+    if (left !== -1) return left
+    
+    return this.depth(node, currentItem.right, depth + 1)
+  }
+
+  height(node = this.root) {
+    if (node === null) return -1
+  
+    const left = this.height(node.left)
+    const right = this.height(node.right)
+
+    return Math.max(left, right) + 1
+  }
+
+  isBalanced(node = this.root) {
+
+    if (node === null) {
+      return true
+    }
+    
+    const leftHeight = this.height(node.left)
+    const rightHeight = this.height(node.right)
+
+    const heightDifference = Math.abs(leftHeight - rightHeight)
+
+    if (heightDifference > 1) {
+      return false
+    }
+
+    return this.isBalanced(node.left) && this.isBalanced(node.right)
+  }
+
+  rebalance() {
+    const array = [];
+    this.inOrder(data => array.push(data)); // Collect tree values into array
+    this.buildTree(array)
+  }
 }
-
- 
-
-
-
 
 const arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
 const tree = new Tree(arr);
 tree.buildTree(arr);
 tree.prettyPrint()
-const rootNode = tree.buildTree()
-console.log(rootNode)
-
 tree.insert(198)
 tree.prettyPrint()
 tree.preOrder()
+tree.isBalanced()
+tree.inOrder()
+tree.insert(2098)
+tree.insert(4897)
+tree.insert(5998)
+tree.rebalance()
+tree.prettyPrint()
+
+
+
 
 
 
